@@ -2,8 +2,8 @@ const express = require("express")
 const cors = require("cors")
 const app = express()
 app.use(cors())
-const weatherData = require('./data/weather.json');
-const weather = require('./data/weather.json')
+// const weatherData = require('./data/weather.json');
+// const weather = require('./data/weather.json')
 const dotenv = require("dotenv");
 const { default: axios } = require("axios");
 
