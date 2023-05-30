@@ -5,6 +5,7 @@ app.use(cors())
 // const weatherData = require('./data/weather.json');
 // const weather = require('./data/weather.json')
 const dotenv = require("dotenv");
+dotenv.config()
 const { default: axios } = require("axios");
 
 
@@ -20,25 +21,6 @@ class Forecast {
 app.get('/', function (request, response) {
     response.send("hello")
 })
-app.get("/weather", function (request, response) {
-    console.log(request.query.lat)
-    console.log(request.query.lon)
-    console.log(request.query.searchQuery)
-    // setting function called cityData that compares the entered data to specific city
-    let cityData = weatherData.find(function (element) {
-        if (element.city_name === request.query.searchQuery) {
-            return true
-        } else {
-            return false
-        }
-    })
-    // takes fuction from single argument to create a new array
-    console.log(cityData)
-    let ForecastData = cityData.data.map(function (element) {
-        return new Forecast(element.datetime, element.weather.description)
-    })
-    response.send(ForecastData);
-});
 let headers = {
     Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhN2YyYmI5NWY1YjQzYzdjNTg2NzA1M2FkNzcyNzZiNyIsInN1YiI6IjY0NjY3MmVjMmJjZjY3MDE1NTgxOWYxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.DVmk4oD1fL28Si6su8HgfzzY87jaem-x3-8Cuho1s7s"
 }
@@ -51,19 +33,17 @@ app.get("/movies", async function (request, response) {
 })
 
 app.get("/weather", async function (request, response) {
-    const lat = request.query.lat;
-    const lon = request.query.lon;
+
     const searchQuery = request.query.searchQuery;
 
     try {
         // Make an Axios request to the weather API using the latitude and longitude
         const weatherResponse = await axios.get(
-            `https://api.weatherapi.com/v1/forecast.json?key=${process.env.WEATHER_API_KEY}&q=${lat},${lon}&days=5`
+            `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&city=${searchQuery}`
         );
-
         // Extract the forecast data from the API response
-        const forecastData = weatherResponse.data.forecast.forecastday.map(
-            (forecast) => new Forecast(forecast.date, forecast.day.condition.text)
+        const forecastData = weatherResponse.data.data.map(
+            (forecast) => new Forecast(forecast.date, forecast.weather.description)
         );
 
         response.send(forecastData);
